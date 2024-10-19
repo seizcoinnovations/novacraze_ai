@@ -48,6 +48,7 @@ $appName = getAppSettings('name');
                         <li class="nav-item"><a class="nav-link me-lg-3" href="#features">{{ __tr('Features') }}</a>
                         </li>
                         <li class="nav-item"><a class="nav-link me-lg-3" href="#pricing">{{ __tr('Pricing') }}</a></li>
+                        <li class="nav-item"><a class="nav-link me-lg-3" href="{{ route('user.subvendor.subscriptionplans') }}">{{ __tr('Subvendor Pricing') }}</a></li>
                         <li class="nav-item"><a class="nav-link me-lg-3" href="{{ route('user.contact.form') }}">{{
                                 __tr('Contact') }}</a></li>
                         @if(!isLoggedIn())

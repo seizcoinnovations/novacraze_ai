@@ -57,7 +57,7 @@ class VendorController extends BaseController
         return $this->vendorEngine->prepareVendorDataTableList();
     }
 
-    public function addVendor(CommonRequest $request)
+    public function addVendor(CommonRequest $requvendorDetailsest)
     {
         $request->validate([
             'vendor_title' => 'required|string|min:2|max:100',

@@ -44,6 +44,13 @@
                         <span class="nav-link-inner--text">{{ __tr('Pricing') }}</span>
                     </a>
                 </li>
+
+                {{-- <li class="nav-item">
+                    <a class="nav-link" href="{{ url('/#pricing') }}">
+                        <span class="nav-link-inner--text">{{ __tr('Subvendor Pricing') }}</span>
+                    </a>
+                </li> --}}
+
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('user.contact.form') }}">{{
                     __tr('Contact') }}</a>

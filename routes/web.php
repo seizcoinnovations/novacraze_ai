@@ -21,6 +21,8 @@ use App\Yantrana\Components\Subscription\Controllers\StripeWebhookController;
 use App\Yantrana\Components\Configuration\Controllers\ConfigurationController;
 use App\Yantrana\Components\Subscription\Controllers\ManualSubscriptionController;
 use App\Yantrana\Components\WhatsAppService\Controllers\WhatsAppServiceController;
+use App\Yantrana\Components\Subvendor\Controllers\SubVendorController;
+use App\Yantrana\Components\SubvendorSubscription\Controllers\SubvendorSubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -414,6 +416,38 @@ Route::middleware([
             });
             // User Routes Group End
 
+            //subvendor routes
+
+            
+            Route::get('/subvendors', function () {
+                return view('subvendors.sub_vendor_list');
+            })->name('central.vendors.subvendors');
+
+            Route::prefix('/subvendor')->group(function () {
+                Route::get('/subvendor-fetch-list', [
+                    SubVendorController::class,
+                    'subvendorDataTableList',
+                ])->name('central.vendors.subvendors.read.list');
+
+                // Route::post('/add', [
+                //     SubVendorController::class,
+                //     'addSubVendor',
+                // ])->name('central.subvendors.write.add');
+
+                /***subscription plan ***/
+                Route::get('/subvendor-subscription-plan', [
+                    SubvendorSubscriptionController::class,
+                    'subscriptionPlans',
+                ])->name('central.subvendors.subscriptionplans');
+
+                Route::post('/subvendor-subscription-plans', [
+                    SubvendorSubscriptionController::class,
+                    'subscriptionPlansUpdate',
+                ])->name('central.subvendors.subscriptionplans.write.update');
+                /***subscription plan ***/
+            });
+
+            
 
             Route::prefix('/whatsapp')->group(function () {
 
@@ -436,7 +470,8 @@ Route::middleware([
                     WhatsAppServiceController::class,
                     'sendTemplateMessageProcess',
                 ])->name('vendor.template_message.contact.process');
-
+                
+                
                 Route::prefix('/campaign')->group(function () {
 
                     Route::get('/new', [
@@ -866,6 +901,12 @@ Route::get('/contact', [
     HomeController::class,
     'contactForm',
 ])->name('user.contact.form');
+
+Route::get('/subvendorsubscriptionplans', [
+    SubvendorSubscriptionController::class,
+    'subscriptionplansIndex',
+])->name('user.subvendor.subscriptionplans');
+
 // Contact process
 Route::post('/contact-process', [
     HomeController::class,
