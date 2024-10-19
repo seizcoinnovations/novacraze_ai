@@ -18,6 +18,7 @@
                
                 @foreach ($planStructure as $planKey => $plan)
                         @php
+                        $charges = $plan['charges'];
                         // print_r($plan);
                         @endphp
                             <div class="col-lg-4 col-md-6 col-sm-12 mb-4 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.3s; animation-name: fadeInUp;">
@@ -26,17 +27,13 @@
                                             <div class="price-head">
                                                 <h6 class="display-5 mb-4 text-uppercase">{{ $plan['title']}}</h6>
                                                 <hr class="bg-success">
-                                                {{-- @foreach ($charges as $itemKey => $itemValue)
-                                                @php
-                                                    if(!$itemValue['enabled']) {
-                                                        continue;
-                                                    }
-                                                @endphp
-                                                <h2 class="price mb-1">{{ formatAmount($itemValue['charge'], true, true) }}</h2>
-                                                <span>{{ Arr::get($plan['charges'][$itemKey], 'title', '') }}</span>
+                                               
+                                                {{-- <h2 class="price mb-1">{{ formatAmount($charges['price']['value'], true, true) }}</h2> --}}
+                                                <h2 class="price mb-1">{{ formatAmount($charges['price']['value'], true, true) }}</h2>
+                                                <span>{{ $charges['months']['value'] }}  -  {{ $charges['months']['description'] }}</span>
                                                 <br><br>
-                                                @endforeach
-                                                <small><a class="text-muted" target="_blank" href="https://business.whatsapp.com/products/platform-pricing">{{  __tr('+ WhatsApp Cloud Messaging Charges') }} <i class="fas fa-external-link-alt"></i></a></small> --}}
+                                                
+                                                <small><a class="text-muted" target="_blank" href="https://business.whatsapp.com/products/platform-pricing">{{  __tr('+ WhatsApp Cloud Messaging Charges') }} <i class="fas fa-external-link-alt"></i></a></small>
                                             </div>
                                             <hr class="bg-success mt-4">
                                             <ul>
@@ -46,16 +43,16 @@
                                                 // $featureValue = $savedPlan['features'][$featureKey];
                                             @endphp
                                                 <li>
-                                                    {{-- @if (isset($featureValue['type']) and ($featureValue['type'] == 'switch'))
+                                                    @if (isset($featureValue['type']) and ($featureValue['type'] == 'switch'))
                                                     @if (isset($featureValue['limit']) and $featureValue['limit'])
                                                     <i class="fa fa-check mr-3 bg-success"></i>
                                                     @else
                                                     <i class="fa fa-times mr-3 bg-danger"></i>
                                                     @endif
-                                                    {{ ($configFeatureValue['description']) }}
+                                                    {{ ($featureValue['description']) }}
                                                     @else
-                                                    <strong>@if (isset($featureValue['limit']) and $featureValue['limit'] < 0) {{ __tr('Unlimited') }} @elseif(isset($featureValue['limit'])) {{ __tr($featureValue['limit']) }} @endif </strong> {{ ($configFeatureValue['description']) }} {{ ($configFeatureValue['limit_duration_title'] ?? '') }}
-                                                    @endif --}}
+                                                    <strong>@if (isset($featureValue['limit']) and $featureValue['limit'] < 0) {{ __tr('Unlimited') }} @elseif(isset($featureValue['limit'])) {{ __tr($featureValue['limit']) }} @endif </strong> {{ ($featureValue['description']) }}
+                                                    @endif
                                                 </li>
                                             @endforeach
                                             </ul>
