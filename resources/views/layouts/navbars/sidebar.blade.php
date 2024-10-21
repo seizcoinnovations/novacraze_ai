@@ -188,6 +188,36 @@
                         {{ __tr('QR Code') }}
                     </a>
                 </li>
+                @if (hasVendorAccess('subvendor'))
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="#vendorSubvendorSubmenuNav" data-toggle="collapse" role="button"
+                        aria-expanded="true" aria-controls="vendorSubvendorSubmenuNav">
+                        <i class="fa fa-truck text-red"></i>
+                        <span class="">{{ __tr('SubVendor') }}</span>
+                    </a>
+                    <div class="collapse show lw-expandable-nav" id="vendorSubvendorSubmenuNav">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link {{ markAsActiveLink('central.vendors.subvendors') }}"
+                                    href="{{ route('central.vendors.subvendors') }}">
+                                    <i class="fa fa-list text-red"></i>
+                                    {{ __tr('List') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ markAsActiveLink('central.subvendors.subscriptionplans') }}"
+                                    href="{{ route('central.subvendors.subscriptionplans') }}">
+                                    <i class="fa fa-stream text-red"></i>
+                                    {{ __tr('Subscription Plans') }}
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </li>
+                @endif
+                
                  @if (hasVendorAccess('messaging'))
                 <li class="nav-item">
                    <strong> <a class="nav-link" href="{{ route('vendor.chat_message.contact.view') }}">

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * HomeController.php - Controller file
+ * Home3ontroller.php - Controller file
  *
  * This file is part of the Home component.
  *-----------------------------------------------------------------------------*/

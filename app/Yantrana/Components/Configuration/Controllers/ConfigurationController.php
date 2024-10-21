@@ -167,6 +167,7 @@ class ConfigurationController extends BaseController
      *---------------------------------------------------------------- */
     public function subscriptionPlans()
     {
+        // return getPaidPlans();
         return $this->loadView('configuration.subscription-plans', [
             'planDetails' => getPaidPlans(),
             'freePlan' => getFreePlan(),
