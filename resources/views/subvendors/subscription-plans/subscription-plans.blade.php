@@ -28,7 +28,7 @@
 
                         <div class="card-body collapse" id="lwPaidBlock{{ $planName }}" data-parent="#lwSubscriptionPlansContainer">
                             <x-lw.form id="lwAddNewPlanForm-{{ $planId }}"
-                                :action="route('manage.configuration.subscription-plans.write.update')">
+                                :action="route('central.subvendors.subscriptionplans.write.update')">
                                 <input type="hidden" name="config_plan_id" value="{{ $planId }}">
 
                                 <x-lw.checkbox id="select_{{ $planId }}" name="enabled" :checked="$plan['enabled']"
