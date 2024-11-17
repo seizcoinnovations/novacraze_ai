@@ -22,6 +22,7 @@ use App\Yantrana\Components\Auth\Repositories\AuthRepository;
 use App\Yantrana\Components\Auth\Interfaces\AuthEngineInterface;
 use App\Yantrana\Components\Auth\Repositories\LoginLogRepository;
 use App\Yantrana\Components\Vendor\Repositories\VendorRepository;
+use App\Yantrana\Components\Subvendor\Repositories\SubvendorRepository;
 use App\Yantrana\Components\Auth\Notifications\ResetPassword as ResetPasswordMail;
 
 class AuthEngine extends BaseEngine implements AuthEngineInterface
@@ -35,6 +36,11 @@ class AuthEngine extends BaseEngine implements AuthEngineInterface
      * @var VendorRepository - Vendor Repository
      */
     protected $vendorRepository;
+
+    /**
+     * @var VendorRepository - SubVendor Repository
+     */
+    protected $SubvendorRepository;
 
     /**
      * @var BaseMailer
@@ -52,12 +58,13 @@ class AuthEngine extends BaseEngine implements AuthEngineInterface
      * @param  AuthRepository  $authRepository  - Auth Repository
      * @return void
      *-----------------------------------------------------------------------*/
-    public function __construct(AuthRepository $authRepository, VendorRepository $vendorRepository, BaseMailer $baseMailer, LoginLogRepository $loginLogRepository)
+    public function __construct(AuthRepository $authRepository, VendorRepository $vendorRepository, BaseMailer $baseMailer, LoginLogRepository $loginLogRepository, SubvendorRepository $SubvendorRepository)
     {
         $this->authRepository = $authRepository;
         $this->vendorRepository = $vendorRepository;
         $this->baseMailer = $baseMailer;
         $this->loginLogRepository = $loginLogRepository;
+        $this->SubvendorRepository = $SubvendorRepository;
     }
 
     /**
@@ -70,13 +77,25 @@ class AuthEngine extends BaseEngine implements AuthEngineInterface
     {
         $request->authenticate();
         $request->session()->regenerate();
+        // return getUserAuthInfo();
         // check vendor and user account status
         if((getVendorUid() and ((getUserAuthInfo('vendor_status') != 1) or (getUserAuthInfo('status') != 1)))) {
-            Auth::logout();
-            $request->session()->invalidate();
-            return $this->engineFailedResponse([
-                'show_message' => true,
-            ], __tr('Vendor/User account is not in active state'));
+            if((getSubVendorUid() and ((getUserAuthInfo('vendor_status') != 1) or (getUserAuthInfo('status') != 1)))) {
+                Auth::logout();
+                $request->session()->invalidate();
+                return $this->engineFailedResponse([
+                    'show_message' => true,
+                ], __tr('SubVendor/User account is not in active state'));
+            }
+            else
+            {
+                Auth::logout();
+                $request->session()->invalidate();
+                return $this->engineFailedResponse([
+                    'show_message' => true,
+                ], __tr('Vendor/User account is not in active state'));
+            }
+            
         }
         if((getUserAuthInfo('status') != 1)) {
             Auth::logout();
@@ -429,5 +448,19 @@ class AuthEngine extends BaseEngine implements AuthEngineInterface
 
         //error response
         return $this->engineFailedResponse([], __tr("Invalid request."));
+    }
+
+    //subvendor registration 
+    public function processsubvendorRegistration($inputData)
+    {
+        $transactionResponse = $this->authRepository->processTransaction(function () use ($inputData) {
+            $subvendor = $this->SubvendorRepository->storeSubVendor($inputData);
+            if (! $subvendor) {
+                return $this->authRepository->transactionResponse(2, ['show_message' => true], __tr('Failed to register user'));
+            }
+            return $this->authRepository->transactionResponse(1, array_merge(['show_message' => true], $subvendor->toArray()), __tr('Your account created successfully.'));
+        });
+
+        return $this->engineResponse($transactionResponse);
     }
 }

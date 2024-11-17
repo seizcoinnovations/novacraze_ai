@@ -40,10 +40,11 @@ class AuthModel extends BaseModel implements AuthenticatableContract, Authorizab
      */
     protected $casts = [];
 
+
     /**
      * @var array - The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $guarded = [];
 
     /**
      * The attributes excluded from the model's JSON form.

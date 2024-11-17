@@ -23,6 +23,7 @@ use App\Yantrana\Components\Subscription\Controllers\ManualSubscriptionControlle
 use App\Yantrana\Components\WhatsAppService\Controllers\WhatsAppServiceController;
 use App\Yantrana\Components\Subvendor\Controllers\SubVendorController;
 use App\Yantrana\Components\SubvendorSubscription\Controllers\SubvendorSubscriptionController;
+use App\Yantrana\Components\SubvendorInstantOffers\Controllers\InstantOfferController;
 
 /*
 |--------------------------------------------------------------------------
@@ -446,6 +447,7 @@ Route::middleware([
                 ])->name('central.subvendors.subscriptionplans.write.update');
                 /***subscription plan ***/
             });
+
 
             
 
@@ -885,6 +887,37 @@ Route::middleware([
             });
             // Contact Routes Group End
         });
+
+        Route::middleware([
+            App\Http\Middleware\SubVendorAccessCheckpost::class,
+        ])->prefix('subvendor-console')
+            ->group(function () {
+                Route::get('/', [
+                    DashboardController::class,
+                    'subvendorDashboardView',
+                ])->name('subvendor.console');
+
+                Route::get('/instant_offers', [
+                    InstantOfferController::class,
+                    'instantoffersList',
+                ])->name('subvendor.instantOffers');
+
+                Route::post('/instant_offers_add', [
+                    InstantOfferController::class,
+                    'addInstantOffers',
+                ])->name('subvendors.instant_offers.write.add');
+
+                Route::get('/instant_offers_add', [
+                    InstantOfferController::class,
+                    'listInstantOffers',
+                ])->name('subvendors.instant_offers.read.list');
+
+                Route::post('/instant_offers_delete/{instantofferIdOrUid}', [
+                    InstantOfferController::class,
+                    'deleteInstantOffers',
+                ])->name('subvendor.instant_offer.delete');
+            });
+    
 });
 // subscription payment webhook for stripe
 Route::post(
@@ -906,6 +939,11 @@ Route::get('/subvendorsubscriptionplans', [
     SubvendorSubscriptionController::class,
     'subscriptionplansIndex',
 ])->name('user.subvendor.subscriptionplans');
+
+Route::get('subvendor_register/{subscriptionId}', [
+    SubvendorSubscriptionController::class,
+    'subvendorRegistration',
+])->name('central.subvendor.registration');
 
 // Contact process
 Route::post('/contact-process', [

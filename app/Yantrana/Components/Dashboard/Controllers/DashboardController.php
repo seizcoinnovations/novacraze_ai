@@ -53,6 +53,14 @@ class DashboardController extends BaseController
         );
     }
 
+    public function subvendorDashboardView()
+    {
+        return $this->loadView(
+            'subvendors.subvendor-dashboard',
+            $this->dashboardEngine->prepareVendorDashboardData()
+        );
+    }
+
     /**
      * Dashboard Stats Data Filter
      *

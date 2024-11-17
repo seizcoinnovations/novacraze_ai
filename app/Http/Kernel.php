@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         // 'common.entrance' => \App\Http\Middleware\CommonEntranceMiddleware::class
         'api.vendor.authenticate' => \App\Http\Middleware\ApiVendorAccessCheckpost::class,
+       
     ];
 }

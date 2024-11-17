@@ -19,7 +19,7 @@
                 @foreach ($planStructure as $planKey => $plan)
                         @php
                         $charges = $plan['charges'];
-                        // print_r($plan);
+                        $sub_id = $plan['id'];
                         @endphp
                             <div class="col-lg-4 col-md-6 col-sm-12 mb-4 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.3s; animation-name: fadeInUp;">
                                     <div class="pricing_design">
@@ -57,6 +57,10 @@
                                             @endforeach
                                             </ul>
                                             <div class="pricing-price">
+                                            </div>
+                                            <div class="mt-5">
+                                                <!-- Submit Button -->
+                                                <a class="btn btn-primary btn-sm" href ="{{ route('central.subvendor.registration', ['subscriptionId' => $sub_id]) }}"> {{  __tr('Buy Now') }} </a>
                                             </div>
                                         </div>
                                     </div>

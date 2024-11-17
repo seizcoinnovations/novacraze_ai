@@ -27,8 +27,14 @@ class SubvendorSubscriptionEngine extends BaseEngine implements SubvendorSubscri
         return $subscription_plans = $this->SubvendorSubscriptionRepository->subscriptionplans();
     }
 
-    public function preparesubscriptionUpdateData()
+    public function preparesubscriptionUpdateData($request)
     {
+        return $subscription_plans = $this->SubvendorSubscriptionRepository->update_subscriptionplans($request);
         
+    }
+
+    public function fetchallcompanycategories()
+    {
+        return $companycategories = $this->SubvendorSubscriptionRepository->companycategories();
     }
 }

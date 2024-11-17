@@ -97,6 +97,14 @@ Route::group([
 
     });
 
+
+    //subvendor routes 
+
+    Route::post('/register/subvendor', [
+        AuthController::class,
+        'subvendor_register',
+    ])->name('auth.subvendor.register.process');
+
     Route::group([
         'middleware' => ['auth', 'throttle:6,1'],
     ], function () {

@@ -20,6 +20,8 @@ use App\Yantrana\Components\Auth\AuthEngine;
 use App\Yantrana\Components\Auth\Requests\LoginRequest;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Yantrana\Components\Auth\Requests\RegisterRequest;
+use App\Yantrana\Components\Auth\Requests\SubvendorRegisterRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends BaseController
 {
@@ -59,7 +61,7 @@ class AuthController extends BaseController
     {
         $processReaction = $this->authEngine->processLogin($request);
         //check reaction code equal to 1
-        if ($processReaction['reaction_code'] === 1) {
+        // if ($processReaction['reaction_code'] === 1) {
             $userStatus = auth()->user()->status;
             if (!$userStatus) {
                 $this->authEngine->processLogout($request);
@@ -92,17 +94,27 @@ class AuthController extends BaseController
                     ])
                 );
             }
-
+            if (hasCentralAccess())
+            {
+                $redirection_page = 'central.console';
+            }
+            elseif (hasVendorAccess()) {
+                $redirection_page = 'vendor.console';
+            }
+            elseif (hassubvendorAccess()) {
+                $redirection_page = 'subvendor.console';
+            }
+            else
+            {
+                $redirection_page = 'home';
+            }
+            
             return $this->responseAction(
                 $this->processResponse($processReaction, [], [], true),
-                $this->redirectTo((hasCentralAccess()
-                    ? 'central.console'
-                    : (hasVendorAccess()
-                        ? 'vendor.console'
-                        : 'home')))
+                
+                $this->redirectTo($redirection_page)
             );
-        }
-
+        // }
         return $this->responseAction(
             $this->processResponse($processReaction, [], [], true)
         );
@@ -523,5 +535,24 @@ class AuthController extends BaseController
         } catch (Expression $e) {
             throw $e;
         }
+    }
+
+    public function subvendor_register(SubvendorRegisterRequest $request)
+    {
+        $processReaction = $this->authEngine->processsubvendorRegistration($request->toArray());
+        if ($processReaction) {
+            return $this->responseAction(
+                $this->processResponse($processReaction, [], [], true),
+                $this->redirectTo('auth.login', [], [
+                    __tr('Your account has been created successfully'),
+                    'success',
+                ])
+            );
+        }
+
+        return $this->responseAction(
+            $this->processResponse($processReaction, [], [], true)
+        );
+       
     }
 }

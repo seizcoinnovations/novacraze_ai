@@ -15,6 +15,7 @@ use App\Yantrana\Components\Subscription\Models\ManualSubscriptionModel;
 use App\Yantrana\Components\Subscription\Repositories\ManualSubscriptionRepository;
 use App\Yantrana\Components\Vendor\Models\VendorModel;
 use App\Yantrana\Components\Vendor\Models\VendorUserModel;
+use App\Yantrana\Components\Subvendor\Models\SubVendor;
 
 if (! function_exists('getUserAuthInfo')) {
     /**
@@ -32,46 +33,119 @@ if (! function_exists('getUserAuthInfo')) {
 
         if (Auth::check()) {
             $userAuthInfo = viaFlashCache('user_auth_info', function () use (&$itemOrStatusCode) {
-                $user = AuthModel::with('role', 'vendor')->find(Auth::id());
-                $vendorUser = null;
-                $vendorId = $user->vendors__id ?? null;
-                $vendorUid = $user->vendor->_uid ?? null;
-                $vendorStatus = $user->vendor->status ?? null;
+                
+                $user = AuthModel::find(Auth::id());
                 if($user->user_roles__id == 3) {
+                    $vendorUser = null;
+                    $vendorId = $user->vendors__id ?? null;
+                    $vendorUid = $user->vendor->_uid ?? null;
+                    $vendorStatus = $user->vendor->status ?? null;
+                
                     $vendorUser = VendorUserModel::where('users__id', $user->_id)->first();
                     $vendorId = $vendorUser->vendors__id;
                     $vendor = VendorModel::where('_id', $vendorId)->first();
                     $vendorUid = $vendor->_uid;
                     $vendorStatus = $vendor->status;
+                
+                    // vendorUserDetails
+                    $authenticationToken = md5(uniqid(true));
+                    return [
+                        'authorization_token' => $authenticationToken,
+                        'authorized' => true,
+                        'reaction_code' => (! is_string($itemOrStatusCode) and ! empty($itemOrStatusCode))
+                            ? $itemOrStatusCode : 10, // 10 is Authenticated
+                        'id' => $user->_id,
+                        'uuid' => $user->_uid,
+                        'role_id' => $user->role->_id,
+                        'role_title' => $user->role->title ?? '',
+                        'vendor_id' => $vendorId,
+                        'vendor_created_at' => $user->created_at ?? null,
+                        'vendor_uid' => $vendorUid,
+                        'vendor_status' => $vendorStatus,
+                        'personnel' => $user->_id,
+                        'status' => $user->status,
+                        'timezone' => $user->timezone ?? config('app.timezone'),
+                        'country_id' => $user->countries__id,
+                        'permissions' => $vendorUser?->__data['permissions'],
+                        'profile' => [
+                            'username' => $user->username ?? '',
+                            'full_name' => ($user->first_name ?? '').' '.($user->last_name ?? ''),
+                            'first_name' => $user->first_name ?? '',
+                            'last_name' => $user->last_name ?? '',
+                            'email' => $user->email ?? '',
+                        ],
+                    ];
                 }
-                // vendorUserDetails
-                $authenticationToken = md5(uniqid(true));
-                return [
-                    'authorization_token' => $authenticationToken,
-                    'authorized' => true,
-                    'reaction_code' => (! is_string($itemOrStatusCode) and ! empty($itemOrStatusCode))
-                        ? $itemOrStatusCode : 10, // 10 is Authenticated
-                    'id' => $user->_id,
-                    'uuid' => $user->_uid,
-                    'role_id' => $user->role->_id,
-                    'role_title' => $user->role->title ?? '',
-                    'vendor_id' => $vendorId,
-                    'vendor_created_at' => $user->created_at ?? null,
-                    'vendor_uid' => $vendorUid,
-                    'vendor_status' => $vendorStatus,
-                    'personnel' => $user->_id,
-                    'status' => $user->status,
-                    'timezone' => $user->timezone ?? config('app.timezone'),
-                    'country_id' => $user->countries__id,
-                    'permissions' => $vendorUser?->__data['permissions'],
-                    'profile' => [
-                        'username' => $user->username ?? '',
-                        'full_name' => ($user->first_name ?? '').' '.($user->last_name ?? ''),
-                        'first_name' => $user->first_name ?? '',
-                        'last_name' => $user->last_name ?? '',
-                        'email' => $user->email ?? '',
-                    ],
-                ];
+
+                elseif($user->user_roles__id == 4)
+                {
+                    $user_id = $user->_id;
+                    $subvendor = SubVendor::where('user_id', $user_id)->first();
+                    $subvendor_id = $subvendor->_id;
+                    $subvendor_uid =  $user->_uid;
+
+                    $authenticationToken = md5(uniqid(true));
+                    return [
+                        'authorization_token' => $authenticationToken,
+                        'authorized' => true,
+                        'reaction_code' => (! is_string($itemOrStatusCode) and ! empty($itemOrStatusCode))
+                            ? $itemOrStatusCode : 10, // 10 is Authenticated
+                        'id' => $user->_id,
+                        'uuid' => $user->_uid,
+                        'role_id' => $user->role->_id,
+                        'role_title' => $user->role->title ?? '',
+                        'subvendor_id' => $subvendor->id,
+                        'vendor_created_at' => $user->created_at ?? null,
+                        'subvendor_uid' => $subvendor->_uid,
+                        'subvendor_status' => $user->status,
+                        'personnel' => $user->_id,
+                        'status' => $user->status,
+                        'timezone' => $user->timezone ?? config('app.timezone'),
+                        'country_id' => $user->countries__id,
+                        // 'permissions' => $vendorUser?->__data['permissions'],
+                        'profile' => [
+                            'username' => $user->username ?? '',
+                            'full_name' => ($user->first_name ?? '').' '.($user->last_name ?? ''),
+                            'first_name' => $user->first_name ?? '',
+                            'last_name' => $user->last_name ?? '',
+                            'email' => $user->email ?? '',
+                        ],
+                    ];
+                }
+                else
+                {
+                    $user_id = $user->_id;
+                    
+
+                    $authenticationToken = md5(uniqid(true));
+                    return [
+                        'authorization_token' => $authenticationToken,
+                        'authorized' => true,
+                        'reaction_code' => (! is_string($itemOrStatusCode) and ! empty($itemOrStatusCode))
+                            ? $itemOrStatusCode : 10, // 10 is Authenticated
+                        'id' => $user->_id,
+                        'uuid' => $user->_uid,
+                        'role_id' => $user->role->_id,
+                        'role_title' => $user->role->title ?? '',
+                        // 'vendor_id' => $subvendor->_id,
+                        'vendor_created_at' => $user->created_at ?? null,
+                        // 'subvendor_uid' => $subvendor->_uid,
+                        'subvendor_status' => $user->status,
+                        'personnel' => $user->_id,
+                        'status' => $user->status,
+                        'timezone' => $user->timezone ?? config('app.timezone'),
+                        'country_id' => $user->countries__id,
+                        // 'permissions' => $vendorUser?->__data['permissions'],
+                        'profile' => [
+                            'username' => $user->username ?? '',
+                            'full_name' => ($user->first_name ?? '').' '.($user->last_name ?? ''),
+                            'first_name' => $user->first_name ?? '',
+                            'last_name' => $user->last_name ?? '',
+                            'email' => $user->email ?? '',
+                        ],
+                    ];
+                }
+                
             });
         }
 
@@ -116,6 +190,29 @@ if (! function_exists('getVendorUid')) {
     function getVendorUid()
     {
         return getUserAuthInfo('vendor_uid') ?? getPublicVendorUid();
+    }
+}
+if (! function_exists('getsubVendorId')) {
+    /**
+     * Get Vendor Id
+     *
+     * @return bool
+     */
+    function getsubVendorId()
+    {
+        return getUserAuthInfo('subvendor_id');
+    }
+}
+
+if (! function_exists('getsubVendorUid')) {
+    /**
+     * Get Vendor Uid
+     *
+     * @return string
+     */
+    function getsubVendorUid()
+    {
+        return getUserAuthInfo('subvendor_uid');
     }
 }
 
@@ -260,6 +357,60 @@ if (! function_exists('hasVendorAccess')) {
             return getUserAuthInfo("permissions.$permission") === 'allow';
         }
         return false;
+    }
+
+}
+
+if (! function_exists('validatesubVendorAccess')) {
+
+    /**
+     * Protect action based on permissions
+     *
+     * @param string|array $permission
+     * @return \Illuminate\Auth\Access\Response
+     */
+    function validatesubVendorAccess(string|array $permissions)
+    {
+        $hasAccess = false;
+        if(is_array($permissions)) {
+            foreach ($permissions as $permission) {
+                $hasAccess = hassubVendorAccess($permission);
+                if($hasAccess) {
+                    break;
+                }
+            }
+        } else {
+            $hasAccess = hassubVendorAccess($permissions);
+        }
+        return \Illuminate\Support\Facades\Gate::allowIf($hasAccess);
+    }
+}
+
+if(! function_exists('hassubVendorAccess'))
+{
+    function hassubVendorAccess($permission = null)
+    {
+        // if vendor admin
+        if((getUserAuthInfo('role_id') === 4)) {
+            return true;
+        }
+        // if vendor user then needs to check permissions
+        if(hassubVendorUserAccess() and $permission) {
+            return getUserAuthInfo("permissions.$permission") === 'allow';
+        }
+        return false;
+    }
+}
+
+if (! function_exists('hassubVendorUserAccess')) {
+    /**
+     * Check if user is Vendor User Access
+     *
+     * @return bool
+     */
+    function hassubVendorUserAccess()
+    {
+        return (getUserAuthInfo('role_id') === 4);
     }
 }
 

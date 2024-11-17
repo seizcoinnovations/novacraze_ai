@@ -9,6 +9,7 @@
 namespace App\Yantrana\Components\SubvendorSubscription\Repositories;
 
 use App\Yantrana\Base\BaseRepository;
+use App\Yantrana\Components\SubvendorCompanyCategories\Models\CompanyCategory;
 use App\Yantrana\Components\SubvendorSubscription\Interfaces\SubvendorSubscriptionRepositoryInterface;
 use App\Yantrana\Components\SubvendorSubscription\Models\SubvendorSubscription;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ class SubvendorSubscriptionRepository extends BaseRepository implements Subvendo
      * @var object
      */
     protected $primaryModel = SubvendorSubscription::class;
+    protected $categoryModel = CompanyCategory::class;
 
     public function subscriptionplans()
     {
@@ -63,6 +65,51 @@ class SubvendorSubscriptionRepository extends BaseRepository implements Subvendo
             $subscriptions[$plan_name]['charges']['price']['value'] = $subscription_plan->plan_price; 
         }
         return $subscriptions;
+    }
+
+    public function companycategories()
+    {
+        return $company_categories = $this->categoryModel::get();
+    }
+
+    public function update_subscriptionplans($request)
+    {
+        $id = $request->config_plan_id;
+        $name = $request->title;
+        $status = isset($request->enabled) ? 1 : 0;
+        $category_listing_count = $request->category_listing_limit;
+        $shop_count = $request->shop_limit;
+        $lead_count = $request->lead_limit;
+        $views_count = $request->views_limit;
+        $click_count = $request->click_limit;
+        $booking_management_count = $request->booking_limit;
+        $instant_offer_count = $request->instant_offer_limit;
+        $advertisement_count = $request->advertisement_limit;
+        $custom_bot = $request->custom_bot_limit;
+        $plan_months_count = $request->Price_charge;
+        $plan_price = $request->Months_charge;
+
+        $update_array = [
+            'name' => $name,
+            'status' => $status,
+            'category_listing_count' => $category_listing_count,
+            'shop_count' => $shop_count,
+            'lead_count' => $lead_count,
+            'views_count' => $views_count,
+            'click_count' => $click_count,
+            'booking_management_count' => $booking_management_count,
+            'instant_offer_count' => $instant_offer_count,
+            'advertisement_count' => $advertisement_count,
+            'plan_months_count' => $plan_months_count,
+            'plan_price' => $plan_price,
+        ];
+
+        $update_subscription_plans =  $this->primaryModel::where('id', $id)->update($update_array);
+
+        if( $update_subscription_plans)
+        {
+            return true;
+        }
     }
   
 }
