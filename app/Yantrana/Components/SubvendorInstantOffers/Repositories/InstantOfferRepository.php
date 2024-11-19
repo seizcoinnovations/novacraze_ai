@@ -43,6 +43,11 @@ class InstantOfferRepository extends BaseRepository implements InstantOfferRepos
         }
      }
 
+     public function totalOffersCount()
+     {
+        return $this->primaryModel::count();
+     }
+
      public function fetchInstantOfferDataTableSource()
      {
         $dataTableConfig = [
@@ -61,6 +66,11 @@ class InstantOfferRepository extends BaseRepository implements InstantOfferRepos
                         'name as title',
                         'created_at',
                         'status',
+                        DB::raw("CASE 
+                        WHEN status = 0 THEN 'Inactive'
+                        WHEN status = 1 THEN 'Approved'
+                        WHEN status = 2 THEN 'Rejected'
+                        ELSE 'Unknown' END as status_label")
                     ],
                     'sub_vendors' => [
                         'id as userId',
@@ -73,11 +83,57 @@ class InstantOfferRepository extends BaseRepository implements InstantOfferRepos
             )
             ->dataTables($dataTableConfig)
             ->toArray();
+            
      }
      
      public function prepareInstantOfferDelete($instantofferIdOrUid)
      {
         $instant_offer =  $this->primaryModel::where('_id', $instantofferIdOrUid)->delete();
+
+        if($instant_offer)
+        {
+            return $instant_offer;
+        }
+     }
+
+     public function fetchItInstantOffer($instantofferIdOrUid)
+     {
+        return $this->primaryModel::where('_uid', $instantofferIdOrUid)->first()->toArray();
+        
+     }
+
+     public function updateInstantOffer(array $inputs = [])
+     {
+        $uid = $inputs['instantofferIdOrUid'];
+        $instantoffer_array = [
+            'name' => $inputs['instant_offer_title'],
+            'description' => $inputs['description'],
+            'from_date' => $inputs['from_date'],
+            'to_date' => $inputs['to_date'],
+            // 'image' => $inputs['image'],
+        ];
+
+        $instant_offer =  $this->primaryModel::where('_uid', $uid)->update($instantoffer_array);
+
+        if($instant_offer)
+        {
+            return $instant_offer;
+        }
+     }
+
+     public function prepareInstantOfferReject($instantofferIdOrUid)
+     {
+        $instant_offer =  $this->primaryModel::where('_id', $instantofferIdOrUid)->update(['status' => 2]);
+
+        if($instant_offer)
+        {
+            return $instant_offer;
+        }
+     }
+
+     public function prepareInstantOfferApprove($instantofferIdOrUid)
+     {
+        $instant_offer =  $this->primaryModel::where('_id', $instantofferIdOrUid)->update(['status' => 1]);
 
         if($instant_offer)
         {

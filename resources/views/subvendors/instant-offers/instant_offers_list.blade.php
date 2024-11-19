@@ -8,12 +8,26 @@
 ])
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-xl-12 mb-3 mt-md--5">
-            <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addInstantOfferModal">
-                <?= __tr('Add New Instant Offer') ?>
-            </button>
+    @php
+        $allotted_instant_offer_count = getUserAuthInfo('subscription_details')['instant_offer_count'];
+    @endphp
+    @if ($totalOffersCount>=$allotted_instant_offer_count)
+        <div class="alert alert-danger">
+                {{  __tr('Limit exceeded, please upgrade your plan to add more instant offers') }}
+                <br>
         </div>
+    @endif
+</div>
+<br><br>
+<div class="container-fluid">
+    <div class="row">
+        @if ($totalOffersCount<$allotted_instant_offer_count)
+            <div class="col-xl-12 mb-3 mt-md--5">
+                <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addInstantOfferModal">
+                    <?= __tr('Add New Instant Offer') ?>
+                </button>
+            </div>
+       @endif
         <div class="col-xl-12">
             {{-- DATATABLE --}}
             <x-lw.datatable id="lwManageVendorsTable" :url="route('subvendors.instant_offers.read.list')" data-page-length="100">
@@ -25,7 +39,7 @@
                     <?= __tr('Created at') ?>
                 </th>
                 
-                <th data-orderable="true" data-name="status">
+                <th data-orderable="true" data-name="status_label">
                     <?= __tr('Status') ?>
                 </th>
                
@@ -45,7 +59,7 @@
     </script>
     <script type="text/template" id="actionButtons">
         <!-- EDIT ACTION -->
-        <a data-pre-callback="appFuncs.clearContainer" title="{{ __tr('Edit') }}" class="lw-btn btn btn-sm btn-default lw-ajax-link-action" data-response-template="#lwEditVendorBody" href="<%= __Utils.apiURL("{{ route('vendor.read.update.data', ['vendorIdOrUid']) }}", {'vendorIdOrUid': __tData._uid}) %>" data-toggle="modal" data-target="#lwEditVendor"><i class="fa fa-edit"></i> {{ __tr('Edit') }}</a>
+        <a data-pre-callback="appFuncs.clearContainer" title="{{ __tr('Edit') }}" class="lw-btn btn btn-sm btn-default lw-ajax-link-action" data-response-template="#lwEditInstantofferBody" href="<%= __Utils.apiURL("{{ route('subvendor.instant_offer.read.update.data', ['instantofferIdOrUid']) }}", {'instantofferIdOrUid': __tData._uid}) %>" data-toggle="modal" data-target="#lwEditInstantoffer"><i class="fa fa-edit"></i> {{ __tr('Edit') }}</a>
         <!--  DELETE ACTION -->
         <a data-method="post" href="<%= __Utils.apiURL("{{ route('subvendor.instant_offer.delete', ['instantofferIdOrUid']) }}", {'instantofferIdOrUid': __tData._id}) %>" class="btn btn-danger btn-sm lw-ajax-link-action-via-confirm" data-confirm="#lwDeletePlan-template" title="{{ __tr('Delete') }}" data-toggle="modal" data-target="#deletePlan" data-callback-params="{{ json_encode(['modalId' => '#lwDeletePlan-template','datatableId' => '#lwManageVendorsTable']) }}" data-callback="appFuncs.modelSuccessCallback"><i class="fa fa-trash"></i> {{ __tr('Delete') }}</a>
         
@@ -57,7 +71,7 @@
     <!-- VENDOR DELETE TEMPLATE -->
     <script type="text/template" id="lwDeletePlan-template">
         <h2><?= __tr('Are You Sure!') ?></h2>
-            <p><?= __tr('Are you sure you want to delete this Vendor?') ?></p>
+            <p><?= __tr('Are you sure you want to delete this Instant Offer?') ?></p>
     </script>
     <!-- /VENDOR DELETE TEMPLATE -->
     {{-- ADD VENDOR MODAL --}}
@@ -132,17 +146,16 @@
         </x-lw.form>
     </x-lw.modal>
     <!-- EDIT VENDOR MODAL -->
-    <x-lw.modal id="lwEditVendor" :header="__tr('Edit Vendor')" :hasForm="true">
+    <x-lw.modal id="lwEditInstantoffer" :header="__tr('Edit Instant Offer')" :hasForm="true">
         <!-- EDIT VENDOR FORM  -->
-        <x-lw.form id="lwEditPlanForm" :action="route('vendor.write.update')"
-            :data-callback-params="['modalId' => '#lwEditVendor', 'datatableId' => '#lwManageVendorsTable']"
+        <x-lw.form id="lwEditPlanForm" :action="route('subvendor.instantoffer.write.update')"
+            :data-callback-params="['modalId' => '#lwEditInstantoffer', 'datatableId' => '#lwManageVendorsTable']"
             data-callback="appFuncs.modelSuccessCallback">
             <!-- form body -->
-            <div data-default-text="{{ __tr('Please wait while we fetch data') }}" id="lwEditVendorBody"
+            <div data-default-text="{{ __tr('Please wait while we fetch data') }}" id="lwEditInstantofferBody"
                 class="lw-form-modal-body"></div>
-            <script type="text/template" id="lwEditVendorBody-template">
-                <input type="hidden" name="vendorIdOrUid" value="<%- __tData._uid %>" />
-                    <input type="hidden" name="userIdOrUid" value="<%- __tData.userUId %>" />
+            <script type="text/template" id="lwEditInstantofferBody-template">
+                <input type="hidden" name="instantofferIdOrUid" value="<%- __tData._uid %>" />
                 <!-- FORM FIELDS -->
                 <!-- TITLE -->
                 <div class="form-group">
@@ -151,70 +164,45 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
                         </div>
-                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('Title') ?>" id="lwTitleField" value="<%- __tData.title %>" name="title"/>
+                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('Title') ?>" id="lwTitleField" value="<%- __tData.name %>" name="instant_offer_title"/>
                     </div>
                 </div>
-                <!-- /Title -->
-                {{-- VENDOR TITLE --}}
-                <div class="text-center text-muted mt-4 mb-0 ">
-                    {{ __tr('Admin User') }}
-                </div>
+                
                 <!-- UserName  -->
                 <div class="form-group">
-                    <label for="lwUserNameEditField"><?= __tr('Username') ?></label>
+                    <label for="lwUserNameEditField"><?= __tr('From') ?></label>
                     <div class="input-group input-group-alternative">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-id-card"></i></span>
                         </div>
-                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('Username') ?>" id="lwUserNameEditField" value="<%- __tData.username%>" name="username" required="true" />
+                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('From') ?>" id="lwUserNameEditField" value="<%- __tData.from_date%>" name="from_date" required="true" />
                     </div>
                 </div>
                 <!-- /UserName  -->
                 <!-- FIRST NAME -->
                 <div class="form-group">
-                    <label for="lwDescriptionField"><?= __tr('First Name') ?></label>
+                    <label for="lwDescriptionField"><?= __tr('To') ?></label>
                     <div class="input-group input-group-alternative">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
                         </div>
-                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('First Name') ?>" id="lwFirstNameField" value="<%- __tData.first_name %>" name="first_name"/>
+                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('To') ?>" id="lwFirstNameField" value="<%- __tData.to_date %>" name="to_date"/>
                     </div>
                 </div>
                 <!-- /FIRST NAME -->
                 <!-- LAST NAME -->
                 <div class="form-group">
-                    <label for="lwDescriptionField"><?= __tr('Last Name') ?></label>
+                    <label for="lwDescriptionField"><?= __tr('Description') ?></label>
                     <div class="input-group input-group-alternative">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
                         </div>
-                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('Last Name') ?>" id="lwLastNameField" value="<%- __tData.last_name %>" name="last_name"/>
+                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('Description') ?>" id="lwLastNameField" value="<%- __tData.description %>" name="description"/>
                     </div>
                 </div>
                 <!-- /LAST NAME -->
-                <!-- EMAIL  -->
-                <div class="form-group">
-                    <label for="lwEmailEditField"><?= __tr('Email') ?></label>
-                    <div class="input-group input-group-alternative">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-at"></i></span>
-                        </div>
-                        <input type="text" class="lw-form-field form-control" placeholder="<?= __tr('Email ') ?>" id="lwEmailEditField" value="<%- __tData.email%>" name="email" required="true" />
-                    </div>
-                </div>
-                <!-- /EMAIL  -->
-                <!-- STATUS -->
-                <div class="form-group pt-3">
-                    <label for="lwIsVendorActiveEditField">{{  __tr('Vendor Status') }}</label>
-                    <input type="checkbox" id="lwIsVendorActiveEditField" <%- __tData.store_status == 1 ? 'checked' : '' %> data-lw-plugin="lwSwitchery" name="store_status">
-                </div>
-                <!-- /STATUS -->
-                <!-- STATUS -->
-                <div class="form-group pt-3">
-                    <label for="lwIsActiveEditField">{{  __tr('Admin User Status') }}</label>
-                    <input type="checkbox" id="lwIsActiveEditField" <%- __tData.status == 1 ? 'checked' : '' %> data-lw-plugin="lwSwitchery" name="status">
-                </div>
-                <!-- /STATUS -->
+                
+                
             </script>
             <!-- FORM FOOTER -->
             <div class="modal-footer">
@@ -225,54 +213,7 @@
         <!--/  VENDOR FORM END -->
     </x-lw.modal>
     <!-- EDIT VENDOR MODAL END -->
-    <!-- FOR CHANGE PASSWORD FOR VENDOR -->
-    <x-lw.modal id="lwChangePasswordAuthor" :header="__tr('Change Password')" :hasForm="true">
-        <!-- EDIT ACCOUNT FORM -->
-        <x-lw.form class="mb-0" id="lwChangeAuthorPassword" :action="route('auth.vendor.change.password')"
-            :data-callback-params="['modalId' => '#lwChangePasswordAuthor','datatableId' => '#lwAccountList']"
-            data-callback="appFuncs.modelSuccessCallback" data-secured="true">
-            <!-- FORM BODY -->
-            <div id="lwChangePasswordBody" class="lw-form-modal-body"></div>
-            <script type="text/template" id="lwChangePasswordBody-template">
-                <!-- FORM FIELDS -->
-                <input type="hidden" name="users_id" value="<%-__tData._id %>" />
-                <!-- for new password -->
-                <div class="form-group">
-                    <label for="lwNewPasswordField">
-                        <?= __tr('New Password') ?>
-                    </label>
-                    <div class="input-group input-group-alternative">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-key"></i></span>
-                        </div>
-                        <input type="password" class="lw-form-field form-control {{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="<?= __tr('New Password') ?>" id="lwNewPasswordField" value="" name="password" />
-                    </div>
-                </div>
-                <!-- /NEW PASSWORD -->
-                <!-- CONFIRM NEW PASSWORD -->
-                <div class="form-group">
-                    <label for="lwConfirmNewPasswordField">
-                        <?= __tr('Confirm New Password') ?>
-                    </label>
-                    <div class="input-group input-group-alternative">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-key"></i></span>
-                        </div>
-                        <input type="password" class="lw-form-field form-control"
-                        placeholder="<?= __tr('Confirm New Password') ?>" id="lwConfirmNewPasswordField" value=""
-                        name="password_confirmation" />
-                    </div>
-                </div>
-                <!-- /CONFIRM NEW PASSWORD-->
-            </script>
-            <!-- FORM FOOTER -->
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">{{ __tr('Change Password') }}</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __tr('Close') }}</button>
-            </div>
-        </x-lw.form>
-        <!--/  EDIT VENDOR FORM -->
-    </x-lw.modal>
+   
     <!--/ EDIT VENDOR MODAL -->
     @push('footer')
     @endpush

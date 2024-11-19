@@ -16,6 +16,7 @@ use App\Yantrana\Components\Subscription\Repositories\ManualSubscriptionReposito
 use App\Yantrana\Components\Vendor\Models\VendorModel;
 use App\Yantrana\Components\Vendor\Models\VendorUserModel;
 use App\Yantrana\Components\Subvendor\Models\SubVendor;
+use App\Yantrana\Components\SubvendorSubscription\Models\SubvendorSubscription;
 
 if (! function_exists('getUserAuthInfo')) {
     /**
@@ -83,6 +84,11 @@ if (! function_exists('getUserAuthInfo')) {
                     $subvendor = SubVendor::where('user_id', $user_id)->first();
                     $subvendor_id = $subvendor->_id;
                     $subvendor_uid =  $user->_uid;
+                    $subscription_plan_id = $subvendor->subscription_plan_id;
+
+                    $subscription_details = SubvendorSubscription::find($subscription_plan_id);
+
+
 
                     $authenticationToken = md5(uniqid(true));
                     return [
@@ -110,6 +116,17 @@ if (! function_exists('getUserAuthInfo')) {
                             'last_name' => $user->last_name ?? '',
                             'email' => $user->email ?? '',
                         ],
+                        'subscription_details' => [
+                            'category_listing_count' => $subscription_details->category_listing_count,
+                            'shop_count' => $subscription_details->shop_count,
+                            'lead_count' => $subscription_details->lead_count,
+                            'views_count' => $subscription_details->views_count,
+                            'click_count' => $subscription_details->click_count,
+                            'booking_management_count' => $subscription_details->booking_management_count,
+                            'instant_offer_count' => $subscription_details->instant_offer_count,
+                            'advertisement_count' => $subscription_details->advertisement_count,
+                            'custom_bot' => $subscription_details->custom_bot
+                        ]
                     ];
                 }
                 else

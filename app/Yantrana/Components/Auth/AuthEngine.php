@@ -274,7 +274,7 @@ class AuthEngine extends BaseEngine implements AuthEngineInterface
                 return $this->authRepository->transactionResponse(1, array_merge(['show_message' => true], $newUser->toArray()), __tr('Your account created successfully.'));
             }
 
-            // Send failed server error message
+            // Send failed server error messagez
             return $this->authRepository->transactionResponse(2, ['show_message' => true], __tr('Something went wrong on server, please contact to administrator.'));
         });
 

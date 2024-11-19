@@ -212,7 +212,13 @@
                                                 {{ __tr('Subscription Plans') }}
                                             </a>
                                         </li>
-                                        
+                                        <li class="nav-item">
+                                            <a class="nav-link {{ markAsActiveLink('central.subvendors.instant_offers') }}"
+                                                href="{{ route('central.subvendors.instant_offers') }}">
+                                                <i class="fa fa-stream text-red"></i>
+                                                {{ __tr('Instant Offers') }}
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>

@@ -22,10 +22,9 @@ class InstantOfferController extends BaseController
     
     public function instantoffersList()
     {
-        // $subcription_plans =  $this->subvendorsubscriptionengine->fetchallsubscriptionplans();
-        // return $subcription_plans =  $this->subvendorsubscriptionengine->allsubscriptionplans();
+        $totalOffersCount = $this->InstantOfferEngine->fetchInstantOffersCount();
         return $this->loadView('subvendors.instant-offers.instant_offers_list',[
-            // 'planStructure' => $subcription_plans,
+            'totalOffersCount' => $totalOffersCount,
         ]);
     }
 
@@ -54,6 +53,42 @@ class InstantOfferController extends BaseController
 
         // get back to controller with engine response
         // return $this->processResponse($processReaction, [], [], true);
+    }
+
+    public function listInstantOffer_vendor()
+    {
+        return $this->loadView('vendor.instant_offers.instant_offers_list');
+    }
+
+    public function prepareUpdateInstantOfferData($instantofferIdOrUid)
+    {
+        // ask engine to process the request
+        $processReaction = $this->InstantOfferEngine->prepareInstantofferUpdateData($instantofferIdOrUid);
+
+        // get back to controller with engine response
+        return $this->processResponse($processReaction, [], [], true);
+    }
+
+    public function updateInstantOfferData(CommonRequest $instantoffersData)
+    {
+        $instantoffersData->validate([
+            'instant_offer_title' => 'required|string|min:2|max:100',
+            'from_date' => 'required',
+            'to_date' => 'required',
+            // 'image' => 'required',
+        ]);
+        $processReaction = $this->InstantOfferEngine->updateInstantoffer($instantoffersData->all());
+        return $this->processResponse([], [], [], true);
+    }
+
+    public function rejectInstantoffer($instantofferIdOrUid)
+    {
+        return $processReaction = $this->InstantOfferEngine->prepareInstantOfferReject($instantofferIdOrUid);
+    }
+
+    public function approveInstantoffer($instantofferIdOrUid)
+    {
+        return $processReaction = $this->InstantOfferEngine->prepareInstantOfferApprove($instantofferIdOrUid);
     }
 
   

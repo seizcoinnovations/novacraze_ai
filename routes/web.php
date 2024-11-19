@@ -414,6 +414,8 @@ Route::middleware([
                     'logoutAsVendorAdmin'
                 ])->name('central.vendors.user.write.logout_as');
 
+            
+
             });
             // User Routes Group End
 
@@ -446,6 +448,29 @@ Route::middleware([
                     'subscriptionPlansUpdate',
                 ])->name('central.subvendors.subscriptionplans.write.update');
                 /***subscription plan ***/
+
+                /****instant offer ******/
+                Route::get('/subvendor-instant-offers', [
+                    InstantOfferController::class,
+                    'listInstantOffer_vendor',
+                ])->name('central.subvendors.instant_offers');
+
+                Route::get('/instant_offers_list', [
+                    InstantOfferController::class,
+                    'listInstantOffers',
+                ])->name('central.subvendors.instant_offers.read.list');
+
+                Route::post("/reject-instant-offer/{instantofferIdOrUid}", [
+                    InstantOfferController::class,
+                    'rejectInstantoffer'
+                ])->name('central.subvendors.instant_offers.reject');
+
+                Route::post("/approve-instant-offer/{instantofferIdOrUid}", [
+                    InstantOfferController::class,
+                    'approveInstantoffer'
+                ])->name('central.subvendors.instant_offers.approve');
+
+                /****** instant offers *****/
             });
 
 
@@ -916,6 +941,21 @@ Route::middleware([
                     InstantOfferController::class,
                     'deleteInstantOffers',
                 ])->name('subvendor.instant_offer.delete');
+
+                Route::get('/get-update-data/{instantofferIdOrUid}', [
+                    InstantOfferController::class,
+                    'prepareUpdateInstantOfferData',
+                ])->name('subvendor.instant_offer.read.update.data');
+
+                Route::post('/update-instant-offer-data', [
+                    InstantOfferController::class,
+                    'updateInstantOfferData',
+                ])->name('subvendor.instantoffer.write.update');
+
+                // Route::get('/get-update-data/{vendorIdOrUid}', [
+                //     vendorController::class,
+                //     'prepareUpdateVendorData',
+                // ])->name('vendor.read.update.data');
             });
     
 });
