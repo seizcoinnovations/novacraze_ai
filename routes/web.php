@@ -22,8 +22,10 @@ use App\Yantrana\Components\Configuration\Controllers\ConfigurationController;
 use App\Yantrana\Components\Subscription\Controllers\ManualSubscriptionController;
 use App\Yantrana\Components\WhatsAppService\Controllers\WhatsAppServiceController;
 use App\Yantrana\Components\Subvendor\Controllers\SubVendorController;
+use App\Yantrana\Components\SubvendorBookings\Models\Booking;
 use App\Yantrana\Components\SubvendorSubscription\Controllers\SubvendorSubscriptionController;
 use App\Yantrana\Components\SubvendorInstantOffers\Controllers\InstantOfferController;
+use App\Yantrana\Components\SubvendorBookings\Controllers\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -932,7 +934,7 @@ Route::middleware([
                     'addInstantOffers',
                 ])->name('subvendors.instant_offers.write.add');
 
-                Route::get('/instant_offers_add', [
+                Route::get('/instant_offers_list', [
                     InstantOfferController::class,
                     'listInstantOffers',
                 ])->name('subvendors.instant_offers.read.list');
@@ -952,10 +954,35 @@ Route::middleware([
                     'updateInstantOfferData',
                 ])->name('subvendor.instantoffer.write.update');
 
-                // Route::get('/get-update-data/{vendorIdOrUid}', [
-                //     vendorController::class,
-                //     'prepareUpdateVendorData',
-                // ])->name('vendor.read.update.data');
+                Route::get('/bookings', [
+                    BookingController::class,
+                    'bookingList',
+                ])->name('subvendor.bookings');
+
+                Route::get('/bookings_list', [
+                    BookingController::class,
+                    'listBookings',
+                ])->name('subvendors.bookings.read.list');
+
+                Route::post('/bookings_add', [
+                    BookingController::class,
+                    'addBookings',
+                ])->name('subvendors.bookings.write.add');
+
+                Route::get('/get-booking-update-data/{bookingIdOrUid}', [
+                    BookingController::class,
+                    'prepareUpdateBookingData',
+                ])->name('subvendor.booking.read.update.data');
+
+                Route::post('/update-booking-data', [
+                    BookingController::class,
+                    'updateBookingData',
+                ])->name('subvendor.booking.write.update');
+
+                Route::post('/booking_delete/{bookingIdOrUid}', [
+                    BookingController::class,
+                    'deleteBooking',
+                ])->name('subvendor.booking.delete');
             });
     
 });

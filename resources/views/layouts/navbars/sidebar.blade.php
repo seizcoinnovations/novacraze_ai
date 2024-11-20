@@ -219,6 +219,7 @@
                                                 {{ __tr('Instant Offers') }}
                                             </a>
                                         </li>
+                                        
                                     </ul>
                                 </div>
                             </li>
@@ -362,6 +363,14 @@
                             <a class="nav-link" href="{{ route('subvendor.instantOffers') }}">
                                 <i class="fa fa-money-check-alt text-success"></i>
                                 {{ __tr('Instant Offers') }}
+                            </a>
+                        </li>
+                    @endif
+                    @if (hassubVendorAccess('bookings'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('subvendor.bookings') }}">
+                                <i class="fa fa-pencil-alt text-warning"></i>
+                                {{ __tr('Bookings') }}
                             </a>
                         </li>
                     @endif
