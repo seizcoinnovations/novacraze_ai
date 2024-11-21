@@ -88,14 +88,14 @@ class BookingEngine extends BaseEngine implements BookingRepositoryInterface
         // return $this->BookingRepository->transactionResponse(1, array_merge(['show_message' => true], $instant_offer->toArray()), __tr('Instant Offer updated successfully.'));
     }
 
-    public function prepareInstantOfferReject($instantofferIdOrUid)
+    public function prepareBookingReject($bookingIdOrUid)
     {
-        $userCollection = $this->BookingRepository->prepareInstantOfferReject($instantofferIdOrUid);
+        $userCollection = $this->BookingRepository->prepareBookingReject($bookingIdOrUid);
     }
 
-    public function prepareInstantOfferApprove($instantofferIdOrUid)
+    public function prepareBookingApprove($bookingIdOrUid)
     {
-        $userCollection = $this->BookingRepository->prepareInstantOfferApprove($instantofferIdOrUid);
+        $userCollection = $this->BookingRepository->prepareBookingApprove($bookingIdOrUid);
     }
 
 }

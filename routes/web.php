@@ -26,6 +26,7 @@ use App\Yantrana\Components\SubvendorBookings\Models\Booking;
 use App\Yantrana\Components\SubvendorSubscription\Controllers\SubvendorSubscriptionController;
 use App\Yantrana\Components\SubvendorInstantOffers\Controllers\InstantOfferController;
 use App\Yantrana\Components\SubvendorBookings\Controllers\BookingController;
+use App\Yantrana\Components\SubvendorAdvertisement\Controllers\AdvertisementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -473,6 +474,34 @@ Route::middleware([
                 ])->name('central.subvendors.instant_offers.approve');
 
                 /****** instant offers *****/
+
+                /********* Bookings *********/
+                Route::get('/subvendor-bookings', [
+                    BookingController::class,
+                    'listBookings_vendor',
+                ])->name('central.subvendors.bookings');
+
+                Route::get('/bookings_list', [
+                    BookingController::class,
+                    'listBookings',
+                ])->name('central.subvendors.bookings.read.list');
+
+                Route::post("/reject-booking/{bookingIdOrUid}", [
+                    BookingController::class,
+                    'rejectBooking'
+                ])->name('central.subvendors.bookings.reject');
+
+                Route::post("/approve-booking/{bookingIdOrUid}", [
+                    BookingController::class,
+                    'approveBooking'
+                ])->name('central.subvendors.bookings.approve');
+
+                Route::get('/get-booking-update-data/{bookingIdOrUid}', [
+                    BookingController::class,
+                    'prepareUpdateBookingData',
+                ])->name('central.subvendors.booking.read.data');
+
+                /********* Bookings *********/
             });
 
 
@@ -983,6 +1012,11 @@ Route::middleware([
                     BookingController::class,
                     'deleteBooking',
                 ])->name('subvendor.booking.delete');
+                
+                Route::get('/advertisements', [
+                    AdvertisementController::class,
+                    'advertisementList',
+                ])->name('subvendor.advertisements');
             });
     
 });

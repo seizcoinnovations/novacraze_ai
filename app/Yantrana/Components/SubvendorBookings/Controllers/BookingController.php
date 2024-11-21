@@ -55,9 +55,9 @@ class BookingController extends BaseController
         // return $this->processResponse($processReaction, [], [], true);
     }
 
-    public function listInstantOffer_vendor()
+    public function listBookings_vendor()
     {
-        return $this->loadView('vendor.instant_offers.instant_offers_list');
+        return $this->loadView('vendor.bookings.bookings_list');
     }
 
     public function prepareUpdateBookingData($bookingIdOrUid)
@@ -81,14 +81,14 @@ class BookingController extends BaseController
         return $this->processResponse([], [], [], true);
     }
 
-    public function rejectInstantoffer($instantofferIdOrUid)
+    public function rejectBooking($bookingIdOrUid)
     {
-        return $processReaction = $this->BookingEngine->prepareInstantOfferReject($instantofferIdOrUid);
+        return $processReaction = $this->BookingEngine->prepareBookingReject($bookingIdOrUid);
     }
 
-    public function approveInstantoffer($instantofferIdOrUid)
+    public function approveBooking($bookingIdOrUid)
     {
-        return $processReaction = $this->BookingEngine->prepareInstantOfferApprove($instantofferIdOrUid);
+        return $processReaction = $this->BookingEngine->prepareBookingApprove($bookingIdOrUid);
     }
 
   

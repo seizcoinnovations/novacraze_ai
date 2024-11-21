@@ -18,8 +18,8 @@
                
                 @foreach ($planStructure as $planKey => $plan)
                         @php
-                        $charges = $plan['charges'];
-                        $sub_id = $plan['id'];
+                            $charges = $plan['charges'];
+                            $sub_id = $plan['id'];
                         @endphp
                             <div class="col-lg-4 col-md-6 col-sm-12 mb-4 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.3s; animation-name: fadeInUp;">
                                     <div class="pricing_design">

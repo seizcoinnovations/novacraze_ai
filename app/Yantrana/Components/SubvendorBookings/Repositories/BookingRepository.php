@@ -137,23 +137,23 @@ class BookingRepository extends BaseRepository implements BookingRepositoryInter
         }
      }
 
-     public function prepareInstantOfferReject($instantofferIdOrUid)
+     public function prepareBookingReject($bookingIdOrUid)
      {
-        $instant_offer =  $this->primaryModel::where('_id', $instantofferIdOrUid)->update(['status' => 2]);
+        $booking =  $this->primaryModel::where('_id', $bookingIdOrUid)->update(['status' => 2]);
 
-        if($instant_offer)
+        if($booking)
         {
-            return $instant_offer;
+            return $booking;
         }
      }
 
-     public function prepareInstantOfferApprove($instantofferIdOrUid)
+     public function prepareBookingApprove($bookingIdOrUid)
      {
-        $instant_offer =  $this->primaryModel::where('_id', $instantofferIdOrUid)->update(['status' => 1]);
+        $booking =  $this->primaryModel::where('_id', $bookingIdOrUid)->update(['status' => 1]);
 
-        if($instant_offer)
+        if($booking)
         {
-            return $instant_offer;
+            return $booking;
         }
      }
 }

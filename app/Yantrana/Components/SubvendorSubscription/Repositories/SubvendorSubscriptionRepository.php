@@ -9,7 +9,7 @@
 namespace App\Yantrana\Components\SubvendorSubscription\Repositories;
 
 use App\Yantrana\Base\BaseRepository;
-use App\Yantrana\Components\SubvendorCompanyCategories\Models\CompanyCategory;
+use App\Yantrana\Components\SubvendorCategories\Models\Category;
 use App\Yantrana\Components\SubvendorSubscription\Interfaces\SubvendorSubscriptionRepositoryInterface;
 use App\Yantrana\Components\SubvendorSubscription\Models\SubvendorSubscription;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +22,7 @@ class SubvendorSubscriptionRepository extends BaseRepository implements Subvendo
      * @var object
      */
     protected $primaryModel = SubvendorSubscription::class;
-    protected $categoryModel = CompanyCategory::class;
+    protected $categoryModel = Category::class;
 
     public function subscriptionplans()
     {
@@ -36,7 +36,7 @@ class SubvendorSubscriptionRepository extends BaseRepository implements Subvendo
         foreach ($subscription_plans as $key => $subscription_plan) {
             $plan_number = $key + 1;
             $plan_name = 'plan_'.$plan_number;
-            $subscriptions[$plan_name]['id'] = $subscription_plan->id;
+            $subscriptions[$plan_name]['id'] = $subscription_plan->_id;
             $subscriptions[$plan_name]['plan_id'] = $plan_name;
             $subscriptions[$plan_name]['enabled'] = ($subscription_plan->status == 1) ? true : false;
             $subscriptions[$plan_name]['title'] = $subscription_plan->name;

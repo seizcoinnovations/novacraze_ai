@@ -219,7 +219,13 @@
                                                 {{ __tr('Instant Offers') }}
                                             </a>
                                         </li>
-                                        
+                                        <li class="nav-item">
+                                            <a class="nav-link {{ markAsActiveLink('central.subvendors.bookings') }}"
+                                                href="{{ route('central.subvendors.bookings') }}">
+                                                <i class="fa fa-stream text-red"></i>
+                                                {{ __tr('Bookings') }}
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -371,6 +377,14 @@
                             <a class="nav-link" href="{{ route('subvendor.bookings') }}">
                                 <i class="fa fa-pencil-alt text-warning"></i>
                                 {{ __tr('Bookings') }}
+                            </a>
+                        </li>
+                    @endif
+                    @if (hassubVendorAccess('advertisements'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('subvendor.advertisements') }}">
+                                <i class="fa fa-bars text-warning"></i>
+                                {{ __tr('Advertisements') }}
                             </a>
                         </li>
                     @endif

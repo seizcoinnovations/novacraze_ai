@@ -41,7 +41,7 @@
                                     <x-slot name="selectOptions">
                                         <option value="">{{ __tr('Brand Category') }}</option>
                                         @foreach ($companycategories as $category)
-                                            <option value="<?= $category->id ?>">{{ $category->name }}</option>
+                                            <option value="<?= $category->_id ?>">{{ $category->name }}</option>
                                         @endforeach
                                     </x-slot>
                                 </x-lw.input-field>
