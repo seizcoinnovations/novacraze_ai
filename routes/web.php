@@ -1017,6 +1017,26 @@ Route::middleware([
                     AdvertisementController::class,
                     'advertisementList',
                 ])->name('subvendor.advertisements');
+
+                Route::post('/advertisement_add', [
+                    AdvertisementController::class,
+                    'addAdvertisement',
+                ])->name('subvendors.advertisement.write.add');
+
+                Route::get('/advertisements_list', [
+                    AdvertisementController::class,
+                    'listAdvertisements',
+                ])->name('subvendors.advertisements.read.list');
+
+                Route::get('/get-advertisement-update-data/{advertisementIdOrUid}', [
+                    AdvertisementController::class,
+                    'prepareUpdateAdvertisementData',
+                ])->name('subvendor.advertisement.read.update.data');
+
+                Route::post('/advertisement_delete/{advertisementIdOrUid}', [
+                    AdvertisementController::class,
+                    'deleteAdvertisement',
+                ])->name('subvendor.advertisement.delete');
             });
     
 });

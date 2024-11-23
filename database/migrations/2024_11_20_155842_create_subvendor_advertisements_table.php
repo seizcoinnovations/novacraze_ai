@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('subvendor_advertisements', function (Blueprint $table) {
             $table->id('_id');
             $table->string('_uid');
+            $table->string('advertisement_name');
             $table->string('image')->nullable();
-            $table->text('content');
             $table->unsignedBigInteger('template_id');
             $table->unsignedBigInteger('subvendor_id');
             $table->unsignedBigInteger('category_id');
-            $table->integer('status');
+            $table->text('content_template');
+            $table->text('content_filled');
+            $table->integer('status')->default(0);
             $table->softDeletes();
             $table->timestamps();
 

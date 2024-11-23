@@ -35,4 +35,39 @@ class AdvertisementController extends BaseController
         ]);
     }
     
+    public function addAdvertisement(CommonRequest $advertisementData)
+    {
+        $advertisementData->validate([
+            'advertisement_name' => 'required|string|min:2|max:100',
+            'final_content' => 'required',
+            'category_id' => 'required',
+            'comments' => 'template_id',
+        ]);
+        $processReaction = $this->AdvertisementEngine->addAdvertisement($advertisementData->all());
+        return $this->processResponse([], [], [], true);
+    }
+
+    public function listAdvertisements()
+    {
+        return $this->AdvertisementEngine->prepareAdvertisementDataTableList();
+    }
+
+    public function prepareUpdateAdvertisementData($advertisementIdOrUid)
+    {
+        // ask engine to process the request
+        $processReaction = $this->AdvertisementEngine->prepareAdvertisementUpdateData($advertisementIdOrUid);
+
+        // get back to controller with engine response
+        return $this->processResponse($processReaction, [], [], true);
+    }
+
+    public function deleteAdvertisement($advertisementIdOrUid)
+    {
+        // ask engine to process the request
+        return $processReaction = $this->AdvertisementEngine->prepareAdvertisementDelete($advertisementIdOrUid);
+
+        // get back to controller with engine response
+        // return $this->processResponse($processReaction, [], [], true);
+    }
+    
 }
